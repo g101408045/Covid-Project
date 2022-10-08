@@ -43,3 +43,19 @@ Select dea.continent, dea.location, dea.date, dea.population, sum(isnull(dea.new
 isnull(vac.new_vaccinations,0) as new_vaccinations, sum(cast(isnull(vac.new_vaccinations,0) as bigint)) over (partition by dea.location order by dea.date) as Cum_vacc_sum 
 from CovidDeaths dea join CovidVaccinations vac on dea.location = vac.location and dea.date = vac.date
 Select * from Rolling_sum
+
+--SQL Queries for Power Bi Project
+
+--1.
+Select SUM(new_cases) as total_cases, SUM(cast(new_deaths as int)) as total_deaths, SUM(cast(new_deaths as int))/SUM(New_Cases)*100 as DeathPercentage From CovidDeaths
+
+--2.
+Select continent, SUM(cast(new_deaths as int)) as TotalDeathCount From CovidDeaths group by Continent order by TotalDeathCount desc
+
+--3.
+Select Location, isnull(Population,0) as Population, isnull(MAX(total_cases),0) as HighestInfectionCount,  isnull(Max((total_cases/population))*100,0) as PercentPopulationInfected From CovidDeaths
+Group by Location, Population order by PercentPopulationInfected desc
+
+--4
+Select Location, isnull(Population,0) as Population ,date, isnull(MAX(total_cases),0) as HighestInfectionCount,  isnull(Max((total_cases/population))*100,0) as PercentPopulationInfected
+From CovidDeaths Group by Location, Population, date order by PercentPopulationInfected desc
